@@ -1,4 +1,3 @@
-{-# OPTIONS --type-in-type #-}
 
 module JS where
 
@@ -57,17 +56,31 @@ postulate
 
 {-# COMPILED_JS keyCode function (e) { return e.keyCode; } #-}
 
-data JSCmd : (A : Set) → Set where
-  ret : ∀ {A} → A → JSCmd A
-  getCanvas : JSCmd Canvas
-  getCtx : Canvas → JSCmd Context
-  alert : String → JSCmd ⊤
-  addEventListner : (Event → JSCmd ⊤) → JSCmd ⊤
-  mkRef : ∀ {A} → A → JSCmd (Ref A)
-  readRef : ∀ {A} → Ref A → JSCmd A
-  writeRef : ∀ {A} → Ref A → A → JSCmd ⊤
-  fillStyle : Context → String → JSCmd ⊤
-  fillRect : Context → ℕ → ℕ → ℕ → ℕ → JSCmd ⊤
-  setScoreText : String → JSCmd ⊤
-  pacman : Context → ℕ → ℕ → ℕ → ℕ → JSCmd ⊤
-  bind : {A B : Set} → JSCmd B → (B → JSCmd A) → JSCmd A
+record JSSym (R : Set → Set) : Set1 where
+  field
+    ret : ∀ {A} → A → R A
+    getCanvas : R Canvas
+    getCtx : Canvas → R Context
+    alert : String → R ⊤
+    addEventListner : (Event → R ⊤) → R ⊤
+    mkRef : ∀ {A} → A → R (Ref A)
+    readRef : ∀ {A} → Ref A → R A
+    writeRef : ∀ {A} → Ref A → A → R ⊤
+    fillStyle : Context → String → R ⊤
+    fillRect : Context → ℕ → ℕ → ℕ → ℕ → R ⊤
+    setScoreText : String → R ⊤
+    pacman : Context → ℕ → ℕ → ℕ → ℕ → R ⊤
+    bind : {A B : Set} → R B → (B → R A) → R A
+
+  infixr 5 _>>_ _>>=_
+
+  _>>_ : {A : Set} → R A → R A → R A
+  m >> f = bind m (λ _ → f)
+
+  _>>=_ : {A B : Set} → R A → (A → R B) → R B
+  _>>=_ = bind
+
+open module JSSym' = JSSym {{...}} public
+
+JSCmd : Set → Set₁
+JSCmd A = ∀ {R : Set → Set}{{_ : JSSym R}} → R A

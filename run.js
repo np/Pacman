@@ -4,5 +4,5 @@
 // require = require("requirejs");
 
 require(['runtime', 'jAgda.myscript'], function (runtime, main_module) {
-  runtime.run(main_module.main);
+  main_module.main(null)(runtime)();
 });
