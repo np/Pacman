@@ -275,11 +275,11 @@ modify ref f
    = readRef ref >>= λ r →
      writeRef ref (f r)
 
-printState : Context → Ref GameState → Maybe KeyPress → JSCmd ⊤
+printState : Context → Ref GameState → KeyPress → JSCmd ⊤
 printState ctx ref kp
    = readRef ref >>= λ gs →
      setScoreText (showNat (getPoints gs)) >>
-     printGS ctx gs kp
+     printGS ctx gs (just kp)
 
 isValid : GameState → Bool
 isValid (GS m pr pc p) with lookup (lookup m pr) pc
@@ -307,10 +307,9 @@ getKeyCode e = if keyCode e == 37 then just kl
           else nothing
 
 update : Context → Ref GameState → Event → JSCmd ⊤
-update ctx r e = maybe (ret _)
-  (modify r ∘ updateGS)
-  kc >> printState ctx r kc
-  where kc = getKeyCode e
+update ctx r e with getKeyCode e
+... | nothing = ret _
+... | just kc = modify r (updateGS kc) >> printState ctx r kc
 
 initGS : GameState
 initGS = GS maze (¡ 1) (¡ 1) 0
