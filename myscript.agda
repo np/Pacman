@@ -96,10 +96,10 @@ data Fin : (n : ℕ) → Set where
 ! zero = zero
 ! suc n₁ = suc (! n₁)
 
-¡_ : {n : ℕ}(m : ℕ){{prf : m < n}} → Fin n
-¡_ {zero} n₁ = λ {{v}} → abort n₁ v
-¡_ {suc n} zero = zero
-¡_ {suc n} (suc n₁) = suc (¡ n₁)
+¡_ : {n : ℕ}(m : ℕ){prf : m < n} → Fin n
+¡_ {zero}  n₁       {v}   = abort n₁ v
+¡_ {suc n} zero     {_}   = zero
+¡_ {suc n} (suc n₁) {prf} = suc (¡_ n₁ {prf})
 
 
 Row : Set
