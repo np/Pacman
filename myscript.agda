@@ -44,14 +44,7 @@ suc m == suc n = m == n
   return function (y) { return (x == y); };
 } #-}
 
-infixr 5 _>>_ _>>=_
-
-_>>_ : {A : Set} → JSCmd A → JSCmd A → JSCmd A
-m >> f = bind m (λ _ → f)
-
-_>>=_ : {A B : Set} → JSCmd A → (A → JSCmd B) → JSCmd B
-_>>=_ = bind
-
+msg : JSCmd String
 msg = ret "hello"
 
 makeFlag : Context → String → String → JSCmd ⊤
@@ -306,7 +299,7 @@ getKeyCode e = if keyCode e == 37 then just kl
           else if keyCode e == 40 then just kd
           else nothing
 
-update : Context → Ref GameState → Event → JSCmd ⊤
+update : ∀{R}{{_ : JSSym R}} → Context → Ref GameState → Event → R ⊤
 update ctx r e with getKeyCode e
 ... | nothing = ret _
 ... | just kc = modify r (updateGS kc) >> printState ctx r kc
