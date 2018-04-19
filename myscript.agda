@@ -22,7 +22,7 @@ mmap f = maybe nothing (just ∘ f)
 _+_ : ℕ → ℕ → ℕ
 0 + n = n
 suc m + n = suc (m + n)
-{-# COMPILED_JS _+_ function (x) {
+{-# COMPILE JS _+_ = function (x) {
   return function (y) { return (x + y); };
 } #-}
 
@@ -31,7 +31,7 @@ infixr 6 _*_
 _*_ : ℕ → ℕ → ℕ
 zero * n = 0
 suc m * n = n + (m * n)
-{-# COMPILED_JS _*_ function (x) {
+{-# COMPILE JS _*_ = function (x) {
   return function (y) { return (x * y);};
 } #-}
 
@@ -40,7 +40,7 @@ zero == zero = true
 zero == suc n = false
 suc m == zero = false
 suc m == suc n = m == n
-{-# COMPILED_JS _==_ function (x) {
+{-# COMPILE JS _==_ = function (x) {
   return function (y) { return (x == y); };
 } #-}
 

@@ -2,6 +2,7 @@
 module JS where
 
 record ⊤ : Set where
+  constructor <>
 
 data Bool : Set where
   true false : Bool
@@ -10,11 +11,11 @@ data Bool : Set where
 ¬ true = false
 ¬ false = true
 
-{-# COMPILED_JS Bool function (x , v) {
+{-# COMPILE JS Bool = function (x , v) {
   if (x) { return v.true();} else {return v.false();}
 } #-}
-{-# COMPILED_JS true true #-}
-{-# COMPILED_JS false false #-}
+{-# COMPILE JS true  = true #-}
+{-# COMPILE JS false = false #-}
 
 if_then_else_ : ∀ {A : Set} → Bool → A → A → A
 if true then t else f = t
@@ -25,18 +26,18 @@ data ℕ : Set where
   suc  : ℕ → ℕ
 
 {-# BUILTIN NATURAL ℕ #-}
-{-# COMPILED_JS ℕ function (x,v) {
+{-# COMPILE JS ℕ = function (x,v) {
   if (x < 1) { return v.zero();} else {return v.suc (x-1);}
 } #-}
-{-# COMPILED_JS zero 0 #-}
-{-# COMPILED_JS suc function (x) {return x+1; } #-}
+{-# COMPILE JS zero = 0 #-}
+{-# COMPILE JS suc  = function (x) {return x+1; } #-}
 
 postulate
   String : Set
   showNat : ℕ → String
 
 {-# BUILTIN STRING String #-}
-{-# COMPILED_JS showNat function(x) {return x.toString();} #-}
+{-# COMPILE JS showNat = function(x) {return x.toString();} #-}
 
 private
   primitive
@@ -45,7 +46,7 @@ private
 _&_ : String → String → String
 _&_ = primStringAppend
 
-{-# COMPILED_JS _&_ function(x) { return function (y) { return x + y;};} #-}
+{-# COMPILE JS _&_ = function(x) { return function (y) { return x + y;};} #-}
 
 postulate
   Canvas : Set
@@ -54,14 +55,16 @@ postulate
   keyCode : Event → ℕ
   Ref : Set → Set
 
-{-# COMPILED_JS keyCode function (e) { return e.keyCode; } #-}
+{-# COMPILE JS keyCode = function (e) { return e.keyCode; } #-}
 
 record JSSym (R : Set → Set) : Set1 where
+  constructor mkJSSym
   field
     ret : ∀ {A} → A → R A
     getCanvas : R Canvas
     getCtx : Canvas → R Context
     alert : String → R ⊤
+    consoleLog : String → R ⊤
     addEventListner : (Event → R ⊤) → R ⊤
     mkRef : ∀ {A} → A → R (Ref A)
     readRef : ∀ {A} → Ref A → R A
