@@ -1,3 +1,5 @@
 jAgda.*.js
 *.swp
 *.agdai
+node_modules/
+jagda/
