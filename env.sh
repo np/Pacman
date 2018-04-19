@@ -9,6 +9,12 @@ npm(){
 }
 
 build(){
-  npm install
+  agda --js --compile-dir=jagda myscript.agda &&
+  npm install &&
   npm run build
+}
+
+dev(){
+  agda --js --compile-dir=jagda myscript.agda &&
+  npm run dev
 }
