@@ -64,6 +64,7 @@ record JSSym (R : Set → Set) : Set1 where
     getCanvas : R Canvas
     getCtx : Canvas → R Context
     alert : String → R ⊤
+    consoleLog : String → R ⊤
     addEventListner : (Event → R ⊤) → R ⊤
     mkRef : ∀ {A} → A → R (Ref A)
     readRef : ∀ {A} → Ref A → R A
