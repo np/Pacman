@@ -2,6 +2,7 @@
 module JS where
 
 record ⊤ : Set where
+  constructor <>
 
 data Bool : Set where
   true false : Bool
@@ -57,6 +58,7 @@ postulate
 {-# COMPILED_JS keyCode function (e) { return e.keyCode; } #-}
 
 record JSSym (R : Set → Set) : Set1 where
+  constructor mkJSSym
   field
     ret : ∀ {A} → A → R A
     getCanvas : R Canvas
